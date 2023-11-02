@@ -4,10 +4,7 @@
     "build": {
       "cache": true,
       "dependsOn": ["^build"],
-      "inputs": [
-        "production",
-        "^production"
-      ]
+      "inputs": ["production", "^production"]
     },
     "lint": {
       "cache": true,
@@ -31,14 +28,24 @@
     "libsDir": "packages"
   },
   "namedInputs": {
-    "default": [
-      "{projectRoot}/**/*",
-      "sharedGlobals"
-    ],
-    "production": [
-      "default"
-    ],
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "production": ["default"],
     "sharedGlobals": []
   },
-  "nxCloudAccessToken": "NDQ5ZjRlZmEtNzY5MC00NjgxLWE0ZGMtZGY3YmY0OGJkZmQzfHJlYWQtd3JpdGU="
+  "nxCloudAccessToken": "NDQ5ZjRlZmEtNzY5MC00NjgxLWE0ZGMtZGY3YmY0OGJkZmQzfHJlYWQtd3JpdGU=",
+  "generators": {
+    "@nx/angular:application": {
+      "style": "scss",
+      "linter": "eslint",
+      "unitTestRunner": "jest",
+      "e2eTestRunner": "none"
+    },
+    "@nx/angular:library": {
+      "linter": "eslint",
+      "unitTestRunner": "jest"
+    },
+    "@nx/angular:component": {
+      "style": "scss"
+    }
+  }
 }

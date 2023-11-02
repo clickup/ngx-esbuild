@@ -1,5 +1,7 @@
 # Add files here to ignore them from prettier formatting
 /dist
 /coverage
+/.nx/cache
 .github/workflows/nx-cloud-agents.yml
 .github/workflows/nx-cloud-main.yml
+.angular
