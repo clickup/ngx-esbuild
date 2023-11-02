@@ -1,10 +1,13 @@
 {
-  "extends": "nx/presets/core.json",
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "targetDefaults": {
     "build": {
       "cache": true,
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "inputs": [
+        "production",
+        "^production"
+      ]
     },
     "lint": {
       "cache": true,
@@ -26,5 +29,16 @@
   "workspaceLayout": {
     "appsDir": "apps",
     "libsDir": "packages"
-  }
+  },
+  "namedInputs": {
+    "default": [
+      "{projectRoot}/**/*",
+      "sharedGlobals"
+    ],
+    "production": [
+      "default"
+    ],
+    "sharedGlobals": []
+  },
+  "nxCloudAccessToken": "NDQ5ZjRlZmEtNzY5MC00NjgxLWE0ZGMtZGY3YmY0OGJkZmQzfHJlYWQtd3JpdGU="
 }
