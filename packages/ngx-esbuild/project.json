@@ -1,0 +1,70 @@
+{
+  "name": "ngx-esbuild",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/ngx-esbuild/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/packages/ngx-esbuild",
+        "main": "packages/ngx-esbuild/src/index.ts",
+        "tsConfig": "packages/ngx-esbuild/tsconfig.lib.json",
+        "assets": [
+          "packages/ngx-esbuild/*.md",
+          {
+            "input": "./packages/ngx-esbuild/src",
+            "glob": "**/!(*.ts)",
+            "output": "./src"
+          },
+          {
+            "input": "./packages/ngx-esbuild/src",
+            "glob": "**/*.d.ts",
+            "output": "./src"
+          },
+          {
+            "input": "./packages/ngx-esbuild",
+            "glob": "generators.json",
+            "output": "."
+          },
+          {
+            "input": "./packages/ngx-esbuild",
+            "glob": "executors.json",
+            "output": "."
+          }
+        ]
+      }
+    },
+    "publish": {
+      "command": "node tools/scripts/publish.mjs ngx-esbuild {args.ver} {args.tag}",
+      "dependsOn": ["build"]
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "packages/ngx-esbuild/**/*.ts",
+          "packages/ngx-esbuild/package.json",
+          "packages/ngx-esbuild/executors.json"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "packages/ngx-esbuild/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    }
+  },
+  "tags": []
+}
