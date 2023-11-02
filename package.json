@@ -1,0 +1,13 @@
+{
+  "name": "@clickup/root",
+  "version": "0.0.0",
+  "license": "MIT",
+  "scripts": {},
+  "private": true,
+  "dependencies": {},
+  "devDependencies": {
+    "@nx/js": "17.0.2",
+    "nx": "17.0.2"
+  },
+  "packageManager": "pnpm@8.10.2"
+}
