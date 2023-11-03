@@ -12,7 +12,7 @@
         "main": "packages/ngx-esbuild/src/index.ts",
         "tsConfig": "packages/ngx-esbuild/tsconfig.lib.json",
         "assets": [
-          "packages/ngx-esbuild/*.md",
+          "README.md",
           {
             "input": "./packages/ngx-esbuild/src",
             "glob": "**/!(*.ts)",

@@ -1,6 +1,23 @@
 {
   "name": "@clickup/ngx-esbuild",
-  "version": "0.0.1",
+  "version": "0.0.2",
+  "description": "ClickUp's esbuild powered local dev server, open sourced so you can speed up developing your own Angular applications!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/clickup/ngx-esbuild.git"
+  },
+  "keywords": [
+    "Angular",
+    "esbuild",
+    "Nx",
+    "Nx Plugin"
+  ],
+  "author": "ClickUp",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/clickup/ngx-esbuild/issues"
+  },
+  "homepage": "https://github.com/clickup/ngx-esbuild#readme",
   "dependencies": {
     "@nx/devkit": "^17.0.2",
     "tslib": "^2.3.0",
