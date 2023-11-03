@@ -1,0 +1,31 @@
+name: Validate PR title
+
+on:
+  pull_request:
+    types: ['opened', 'edited', 'reopened', 'synchronize']
+
+permissions:
+  pull-requests: read
+  contents: read
+
+jobs:
+  validate-pr-title:
+    runs-on: ubuntu-latest
+    name: 'Validate PR title'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - name: Install pnpm
+        uses: pnpm/action-setup@d882d12c64e032187b2edb46d3a0d003b7a43598 # v2.4.0
+      - name: Setup NodeJs
+        id: setup-node
+        uses: actions/setup-node@8f152de45cc393bb48ce5d89d36b731f54556e65 # v4.0.0
+        with:
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install
+      - name: Lint PR title
+        # TODO - forked until https://github.com/JulienKode/pull-request-name-linter-action/pull/227 is merged
+        uses: mattlewis92/pull-request-name-linter-action@9c7a21391dfe3e08dbc7247a1a748422a21d640c # v0.5.0
+        with:
+          configuration-path: './.commitlintrc.json'
