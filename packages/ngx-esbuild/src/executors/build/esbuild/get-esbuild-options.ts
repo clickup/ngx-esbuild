@@ -9,7 +9,6 @@ import postcss, { AcceptedPlugin } from 'postcss';
 import postcssImport from 'postcss-import';
 import postcssUrl from 'postcss-url';
 
-
 import { BuildExecutorSchema } from '../schema';
 import { angularComponentResourcesPlugin } from './plugins/angular-component-resources';
 import { assetsPlugin } from './plugins/assets';
@@ -31,7 +30,7 @@ import {
 } from './plugins/polyfills';
 import { getFileReplacements } from './plugins/utils/get-file-replacements';
 import { workerPlugin } from './plugins/worker';
-import {MemoryCache} from "./plugins/utils/memory-cache";
+import { MemoryCache } from './plugins/utils/memory-cache';
 
 export async function getEsbuildOptions(
   angularBuildTarget: BuildSchema,
@@ -101,11 +100,7 @@ export async function getEsbuildOptions(
         cwd
       ),
       globalScriptsPlugin(angularBuildTarget.scripts ?? [], cwd),
-      polyfillsPlugin(
-        angularBuildTarget.polyfills ?? [],
-        true,
-        cwd
-      ),
+      polyfillsPlugin(angularBuildTarget.polyfills ?? [], true, cwd),
       babelPlugin({
         cache: new MemoryCache(),
         angularComponentResourceQueryString,
