@@ -18,7 +18,7 @@ It makes a different set of trade-offs than the [official Angular CLI esbuild so
 - As it does not typecheck, it cannot AoT compile your code either
 - It is designed for local development only, and does not support building for production
 
-It mainly works by implementing a version these 2 ideas:
+It mainly works by implementing a version of these 2 ideas:
 
 - https://github.com/angular/angular/issues/43131
 - https://github.com/angular/angular/issues/43165
@@ -31,7 +31,7 @@ Hopefully one day, the Angular CLI will support some of this out of the box, but
 - Local dev rebuilds are slow or use too much memory
 - You are not using buildable libraries or module federation
 - AOT / Typechecking is not essential
-- You've already tried the [Angular CLI's esbuild solution](https://angular.io/guide/esbuild) and it's not fast enough for you.
+- You've already tried the [Angular CLI's esbuild solution](https://angular.io/guide/esbuild) and it's not fast enough for you
 
 ## Getting Started
 
@@ -44,7 +44,7 @@ Install with your favorite package manager:
 npm install -D ngx-esbuild
 ```
 
-Add a new target to your apps `project.json` (assuming you have a `build` target using the `@angular-devkit/build-angular:browser` executor):
+Add a new target to your apps `project.json` (assuming you have a `build` target using the `@angular-devkit/build-angular:browser` or `@angular-devkit/build-angular:browser-esbuild` executors):
 
 ```json
 "targets": {
@@ -85,7 +85,7 @@ If you want to type-check component templates, you can run the same command but 
 "command": "npx ngc -p apps/your-app/tsconfig.app.json --noEmit --watch --incremental --pretty"
 ```
 
-You can even run the dev server + typechecking side by side using [tmux](https://www.npmjs.com/package/stmux):
+You can even run the dev server + typechecking side by side using [stmux](https://www.npmjs.com/package/stmux):
 
 ```bash
 stmux -e '' -- [ "nx serve-esbuild demo" .. "nx type-check demo" ]
@@ -147,7 +147,7 @@ This solution is intended to only ever work for local development, and will neve
 
 ## Local development
 
-- Ensure you have Node.js installed
+- Ensure you have Node 18 or higher installed
 - Install pnpm: `corepack enable`
 - Install local dev dependencies: `pnpm install`
 
