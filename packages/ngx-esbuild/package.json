@@ -2,10 +2,28 @@
   "name": "@clickup/ngx-esbuild",
   "version": "0.0.1",
   "dependencies": {
-    "@nx/devkit": "17.0.2",
-    "tslib": "^2.3.0"
+    "@nx/devkit": "^17.0.2",
+    "tslib": "^2.3.0",
+    "@craftamap/esbuild-plugin-html": "^0.6.1",
+    "esbuild": "^0.19.5",
+    "postcss": "^8.4.31",
+    "postcss-import": "^15.1.0",
+    "postcss-url": "^10.1.3",
+    "esbuild-sass-plugin": "^2.16.0",
+    "esbuild-plugin-copy": "^2.1.1",
+    "babel-plugin-tester": "^11.0.4",
+    "@babel/core": "^7.23.2",
+    "@babel/types": "^7.23.0",
+    "cheerio": "1.0.0-rc.12",
+    "express": "^4.18.2",
+    "open": "^8.0.4",
+    "ws": "^8.14.2",
+    "chalk": "^4.1.2",
+    "lodash": "^4.17.21"
   },
-  "type": "commonjs",
+  "peerDependencies": {
+    "@angular-devkit/build-angular": ">=16.0.0"
+  },
   "main": "./src/index.js",
   "typings": "./src/index.d.ts",
   "executors": "./executors.json"

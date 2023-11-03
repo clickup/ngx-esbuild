@@ -5,3 +5,4 @@
 .github/workflows/nx-cloud-agents.yml
 .github/workflows/nx-cloud-main.yml
 .angular
+pnpm-lock.yaml

@@ -10,6 +10,10 @@ TODO
 
 TODO
 
+## Supported options from the Angular CLI
+
+TODO
+
 ## Local development
 
 TODO

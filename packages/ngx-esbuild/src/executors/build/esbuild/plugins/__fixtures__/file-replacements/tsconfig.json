@@ -1,0 +1,10 @@
+{
+  "files": ["entry.ts"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@env2/*": ["env2/*"],
+      "@env/*": ["env/*"]
+    }
+  }
+}

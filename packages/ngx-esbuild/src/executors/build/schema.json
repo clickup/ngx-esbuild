@@ -1,9 +1,29 @@
 {
   "$schema": "http://json-schema.org/schema",
   "version": 2,
-  "title": "Build executor",
-  "description": "",
+  "title": "Build with esbuild",
+  "description": "Alternative to the angular CLI webpack builder that uses esbuild for blazing fast builds during local development. This builder should not be used for production!",
   "type": "object",
-  "properties": {},
+  "properties": {
+    "buildTarget": {
+      "type": "string",
+      "default": "build"
+    },
+    "configurationName": {
+      "type": "string"
+    },
+    "serve": {
+      "type": "boolean",
+      "default": false
+    },
+    "serveTarget": {
+      "type": "string",
+      "default": "serve"
+    },
+    "esbuildTarget": {
+      "type": "string",
+      "default": "es2022"
+    }
+  },
   "required": []
 }

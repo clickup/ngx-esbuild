@@ -1,0 +1,6 @@
+{
+  "files": ["entry.ts"],
+  "compilerOptions": {
+    "experimentalDecorators": true
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "files": ["entry.ts"],
+  "compilerOptions": {
+    "module": "es2020"
+  }
+}
