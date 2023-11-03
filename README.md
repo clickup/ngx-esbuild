@@ -1,5 +1,9 @@
 # ngx-esbuild
 
+[![Build Status](https://github.com/clickup/ngx-esbuild/actions/workflows/ci.yml/badge.svg)](https://github.com/clickup/ngx-esbuild/actions/workflows/ci.yml)
+[![npm version](https://badge.fury.io/js/@clickup%2Fngx-esbuild.svg)](http://badge.fury.io/js/@clickup%2Fngx-esbuild)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 > [ClickUp](https://clickup.com/)'s esbuild powered local dev server, open sourced so you can speed up developing your own Angular applications!
 
 <div align="center">
