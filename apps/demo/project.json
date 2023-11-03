@@ -90,6 +90,12 @@
     },
     "build-esbuild": {
       "executor": "@clickup/ngx-esbuild:build"
+    },
+    "type-check": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pnpm tsc -p apps/demo/tsconfig.app.json --noEmit --watch --incremental --pretty"
+      }
     }
   }
 }
