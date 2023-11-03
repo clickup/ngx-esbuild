@@ -1,6 +1,6 @@
 {
   "name": "@clickup/ngx-esbuild",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "ClickUp's esbuild powered local dev server, open sourced so you can speed up developing your own Angular applications!",
   "repository": {
     "type": "git",

@@ -91,6 +91,12 @@
     "build-esbuild": {
       "executor": "@clickup/ngx-esbuild:build"
     },
+    "serve-esbuild": {
+      "executor": "@clickup/ngx-esbuild:build",
+      "options": {
+        "serve": true
+      }
+    },
     "type-check": {
       "executor": "nx:run-commands",
       "options": {

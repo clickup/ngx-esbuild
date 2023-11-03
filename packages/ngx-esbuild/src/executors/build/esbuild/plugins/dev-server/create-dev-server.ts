@@ -126,7 +126,7 @@ async function getWebsocketClientCode(
   buildOptions: esbuild.BuildOptions
 ): Promise<string> {
   const bundledWsClient = await esbuild.build({
-    entryPoints: [require.resolve('./websocket-client.ts')],
+    entryPoints: [getWebsocketClientEntryPoint()],
     bundle: true,
     target: buildOptions.target,
     metafile: true,
@@ -140,4 +140,15 @@ async function getWebsocketClientCode(
   );
 
   return bundledWsClient.outputFiles[0].text;
+}
+
+function getWebsocketClientEntryPoint(): string {
+  const clientFileName = 'websocket-client';
+  try {
+    // only works for local development in this repo
+    return require.resolve(`./${clientFileName}.ts`);
+  } catch {
+    // else we are in the compiled package
+    return require.resolve(`./${clientFileName}.js`);
+  }
 }
