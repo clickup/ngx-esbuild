@@ -21,7 +21,7 @@
         "@nx/dependency-checks": [
           "error",
           {
-            "ignoredDependencies": ["@angular/core", "@angular/platform-browser", "strip-comments"]
+            "ignoredDependencies": ["@angular/core", "@angular/platform-browser", "strip-comments", "react-dom"]
           }
         ]
       }
