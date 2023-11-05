@@ -45,7 +45,7 @@ Hopefully one day, the Angular CLI will support some of this out of the box, but
 Install with your favorite package manager:
 
 ```bash
-npm install -D ngx-esbuild
+npm install -D @clickup/ngx-esbuild
 ```
 
 Add a new target to your apps `project.json` (assuming you have a `build` target using the `@angular-devkit/build-angular:browser` or `@angular-devkit/build-angular:browser-esbuild` executors):
