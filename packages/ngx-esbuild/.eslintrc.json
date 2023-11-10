@@ -25,7 +25,9 @@
               "@angular/core",
               "@angular/platform-browser",
               "strip-comments",
-              "react-dom"
+              "react-dom",
+              "@babel/plugin-syntax-decorators",
+              "@babel/plugin-syntax-typescript"
             ]
           }
         ]

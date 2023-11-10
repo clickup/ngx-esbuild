@@ -30,6 +30,8 @@
     "esbuild-plugin-copy": "^2.1.1",
     "babel-plugin-tester": "^11.0.4",
     "@babel/core": "^7.23.2",
+    "@babel/plugin-syntax-decorators": "^7.22.10",
+    "@babel/plugin-syntax-typescript": "^7.22.5",
     "@babel/types": "^7.23.0",
     "cheerio": "1.0.0-rc.12",
     "express": "^4.18.2",
