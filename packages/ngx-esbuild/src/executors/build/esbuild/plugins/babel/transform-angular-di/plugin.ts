@@ -107,7 +107,10 @@ function getClassConstructor(
 
 type CtorParameters = Array<{
   type: t.Identifier | t.StringLiteral;
-  decorators: string[];
+  decorators: Array<{
+    type: string;
+    args?: t.Literal[];
+  }>;
 }>;
 
 /**
@@ -160,6 +163,23 @@ function getConstructorParameterDecorators(
         type: t.identifier(type),
         decorators: injectFlagDecorators,
       });
+    } else if (
+      isAttributeDecorator(decorators) &&
+      // Typing of Attribute decorator only accepts a single string as its arguments
+      decorators[0].node?.expression?.type === 'CallExpression' &&
+      decorators[0].node.expression.arguments.length === 1 &&
+      decorators[0].node.expression.arguments[0].type === 'StringLiteral'
+    ) {
+      ctorParameters.push({
+        type: t.identifier('String'), // Attribute decorator only accepts a single string as its first argument
+        decorators: [
+          {
+            type: 'Attribute',
+            args: [decorators[0].node.expression.arguments[0]],
+          },
+        ],
+      });
+      decorators[0].remove(); // TODO - move this mutation out of this method
     } else {
       throw new Error(
         `Could not get type from constructor param: ${param.node.name}`
@@ -198,8 +218,16 @@ function addCtorParametersStaticProperty(
                           return t.objectExpression([
                             t.objectProperty(
                               t.identifier('type'),
-                              t.identifier(d)
+                              t.identifier(d.type)
                             ),
+                            ...(d.args
+                              ? [
+                                  t.objectProperty(
+                                    t.identifier('args'),
+                                    t.arrayExpression(d.args)
+                                  ),
+                                ]
+                              : []),
                           ]);
                         })
                       )
@@ -263,8 +291,8 @@ function getInjectDecorator(
  */
 function getInjectFlagDecorators(
   decorators: NodePath<t.Decorator>[]
-): string[] {
-  const result: string[] = [];
+): Array<{ type: string }> {
+  const result: ReturnType<typeof getInjectFlagDecorators> = [];
   for (const decorator of Array.from(decorators)) {
     if (
       decorator.node?.expression?.type === 'CallExpression' &&
@@ -273,9 +301,22 @@ function getInjectFlagDecorators(
         decorator.node.expression.callee.name
       )
     ) {
-      result.push(decorator.node.expression.callee.name);
+      result.push({ type: decorator.node.expression.callee.name });
       decorator.remove(); // TODO - move this mutation out of this method
     }
   }
   return result;
+}
+
+/**
+ * Returns true
+ * @param decorators
+ */
+function isAttributeDecorator(decorators: NodePath<t.Decorator>[]): boolean {
+  return (
+    decorators.length === 1 &&
+    decorators[0].node?.expression?.type === 'CallExpression' &&
+    decorators[0].node.expression.callee.type === 'Identifier' &&
+    decorators[0].node.expression.callee.name === 'Attribute'
+  );
 }

@@ -375,5 +375,36 @@ class TestComponent {
   constructor(foo: Foo) {}
 }`,
     },
+
+    'should handle attribute decorators': {
+      code: `import { Component, Attribute } from '@angular/core';
+
+    @Component({
+      selector: 'abc',
+      templateUrl: './foo.html',
+    })
+    class TestComponent {
+      constructor(@Attribute('text') foo: string) {}
+    }`,
+      output: `import { Component, Attribute } from '@angular/core';
+@Component({
+  selector: 'abc',
+  templateUrl: './foo.html',
+})
+class TestComponent {
+  static ctorParameters = () => [
+    {
+      type: String,
+      decorators: [
+        {
+          type: Attribute,
+          args: ['text'],
+        },
+      ],
+    },
+  ];
+  constructor(foo: string) {}
+}`,
+    },
   },
 });
