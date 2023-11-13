@@ -91,7 +91,13 @@ class TestComponent {
         class TestComponent {
           static ctorParameters = () => [
             {
-              type: FOO,
+              type: undefined,
+              decorators: [
+                {
+                  type: Inject,
+                  args: [FOO],
+                },
+              ],
             },
           ];
           constructor(foo: Foo) {}
@@ -124,7 +130,13 @@ class TestComponent {
         class TestComponent {
           static ctorParameters = () => [
             {
-              type: FOO,
+              type: undefined,
+              decorators: [
+                {
+                  type: Inject,
+                  args: [FOO],
+                },
+              ],
             },
           ];
           constructor(private foo: Foo) {}
@@ -177,7 +189,13 @@ class TestComponent {
         class TestComponent {
           static ctorParameters = () => [
             {
-              type: FOO,
+              type: undefined,
+              decorators: [
+                {
+                  type: Inject,
+                  args: [FOO],
+                },
+              ],
             },
           ];
           constructor(foo: string) {}
@@ -204,7 +222,13 @@ import { Foo, FOO } from './foo';
 class TestComponent {
   static ctorParameters = () => [
     {
-      type: AUTOMATION_FEATURE_STRATEGIES,
+      type: undefined,
+      decorators: [
+        {
+          type: Inject,
+          args: [AUTOMATION_FEATURE_STRATEGIES],
+        },
+      ],
     },
   ];
   constructor(
@@ -266,13 +290,17 @@ import { Foo } from './foo';
 class TestComponent {
   static ctorParameters = () => [
     {
-      type: TAG_PICKER_AVAILABLE_TAGS,
+      type: undefined,
       decorators: [
         {
           type: SkipSelf,
         },
         {
           type: Optional,
+        },
+        {
+          type: Inject,
+          args: [TAG_PICKER_AVAILABLE_TAGS],
         },
       ],
     },
@@ -330,7 +358,13 @@ import { Foo } from './foo';
 class TestComponent {
   static ctorParameters = () => [
     {
-      type: 'FOO',
+      type: undefined,
+      decorators: [
+        {
+          type: Inject,
+          args: ['FOO'],
+        },
+      ],
     },
   ];
   constructor(foo: Foo) {}
@@ -405,6 +439,39 @@ class TestComponent {
   ];
   constructor(foo: string) {}
 }`,
+    },
+
+    'should handle forwardRef decorator': {
+      code: `
+        import { Component, Inject, forwardRef } from '@angular/core';
+        @Component({
+          selector: 'abc',
+          templateUrl: './foo.html',
+        })
+        class TestComponent {
+          constructor(@Inject(forwardRef(() => Service)) foo: string) {}
+        }
+      `,
+      output: `
+        import { Component, Inject, forwardRef } from '@angular/core';
+        @Component({
+          selector: 'abc',
+          templateUrl: './foo.html',
+        })
+        class TestComponent {
+          static ctorParameters = () => [
+            {
+              type: undefined,
+              decorators: [
+                {
+                  type: Inject,
+                  args: [forwardRef(() => Service)],
+                },
+              ],
+            },
+          ];
+          constructor(foo: string) {}
+        }`,
     },
   },
 });

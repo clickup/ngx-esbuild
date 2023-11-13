@@ -109,7 +109,7 @@ type CtorParameters = Array<{
   type: t.Identifier | t.StringLiteral;
   decorators: Array<{
     type: string;
-    args?: t.Literal[];
+    args?: t.Expression[];
   }>;
 }>;
 
@@ -119,10 +119,8 @@ type CtorParameters = Array<{
  */
 function getConstructorParameterDecorators(
   constructor: NodePath<t.ClassMethod>
-) {
-  const ctorParameters: CtorParameters = [];
-
-  for (const constructorParam of constructor.get('params')) {
+): CtorParameters {
+  return Array.from(constructor.get('params')).map((constructorParam) => {
     const param = getParameterIdentifier(constructorParam);
     // workaround bug with babel printer when using parameter decorators + a default value
     if (
@@ -138,56 +136,31 @@ function getConstructorParameterDecorators(
         ? constructorParam.get('decorators')
         : param.get('decorators')
     ) as NodePath<t.Decorator>[];
+    const angularParameterDecorators =
+      getAngularParameterDecorators(decorators);
+    const hasInjectDecorator = getHasInjectDecorator(
+      angularParameterDecorators
+    );
+    // If there is an @Inject decorator, then we don't need to add the type to the ctorParameters as it will get overridden by the Inject decorators value
+    // Otherwise we run into issues where type references can be preserved at runtime which will then cause the app to not compile with esbuild
+    const type = hasInjectDecorator
+      ? 'undefined'
+      : getTypeIdentifierName(param) ??
+        getTypePrimitiveName(param) ??
+        'undefined';
+    const ctorParameterDecorators = getCtorParameterDecorators(
+      angularParameterDecorators
+    );
 
-    const injectDecorator = getInjectDecorator(decorators);
-    const injectFlagDecorators = getInjectFlagDecorators(decorators);
+    angularParameterDecorators.forEach((node) => {
+      node.remove(); // TODO - move this mutation out of this method
+    });
 
-    if (injectDecorator) {
-      // uses @Inject() decorator
-      assert(injectDecorator.node.expression.type === 'CallExpression');
-      const type = injectDecorator.node.expression.arguments[0].type;
-      assert(type === 'Identifier' || type === 'StringLiteral');
-      ctorParameters.push({
-        type: injectDecorator.node.expression.arguments[0],
-        decorators: injectFlagDecorators,
-      });
-      injectDecorator.remove(); // TODO - move this mutation out of this method
-    } else if (
-      // Uses type annotation for DI
-      param.node.typeAnnotation?.type === 'TSTypeAnnotation' &&
-      param.node.typeAnnotation.typeAnnotation.type === 'TSTypeReference' &&
-      param.node.typeAnnotation.typeAnnotation.typeName.type === 'Identifier'
-    ) {
-      const type = param.node.typeAnnotation.typeAnnotation.typeName.name;
-      ctorParameters.push({
-        type: t.identifier(type),
-        decorators: injectFlagDecorators,
-      });
-    } else if (
-      isAttributeDecorator(decorators) &&
-      // Typing of Attribute decorator only accepts a single string as its arguments
-      decorators[0].node?.expression?.type === 'CallExpression' &&
-      decorators[0].node.expression.arguments.length === 1 &&
-      decorators[0].node.expression.arguments[0].type === 'StringLiteral'
-    ) {
-      ctorParameters.push({
-        type: t.identifier('String'), // Attribute decorator only accepts a single string as its first argument
-        decorators: [
-          {
-            type: 'Attribute',
-            args: [decorators[0].node.expression.arguments[0]],
-          },
-        ],
-      });
-      decorators[0].remove(); // TODO - move this mutation out of this method
-    } else {
-      throw new Error(
-        `Could not get type from constructor param: ${param.node.name}`
-      );
-    }
-  }
-
-  return ctorParameters;
+    return {
+      type: t.identifier(type),
+      decorators: ctorParameterDecorators,
+    };
+  });
 }
 
 /**
@@ -270,53 +243,97 @@ function getParameterIdentifier(
 }
 
 /**
- * Gets the @Inject decorator from a list of constructor decorators
+ * Returns all the angular parameter decorator nodes from a list of constructor decorators
+ * e.g. returns the nodes for @Inject(), @SkipSelf() etc
  * @param decorators
  */
-function getInjectDecorator(
-  decorators: NodePath<t.Decorator>[] | undefined | null
-): NodePath<t.Decorator> | undefined {
-  return decorators?.find((decorator) => {
+function getAngularParameterDecorators(
+  decorators: NodePath<t.Decorator>[]
+): NodePath<t.Decorator>[] {
+  return Array.from(decorators).filter((decorator) => {
     return (
       decorator.node?.expression?.type === 'CallExpression' &&
       decorator.node.expression.callee.type === 'Identifier' &&
-      decorator.node.expression.callee.name === 'Inject'
+      ['Attribute', 'Host', 'Inject', 'Optional', 'Self', 'SkipSelf'].includes(
+        decorator.node.expression.callee.name
+      )
     );
   });
 }
 
 /**
- * Gets the @SkipSelf, @Host and @Optional decorators from a list of constructor decorators
+ * Returns true if the constructor parameter has an @Inject decorator
  * @param decorators
  */
-function getInjectFlagDecorators(
-  decorators: NodePath<t.Decorator>[]
-): Array<{ type: string }> {
-  const result: ReturnType<typeof getInjectFlagDecorators> = [];
-  for (const decorator of Array.from(decorators)) {
-    if (
-      decorator.node?.expression?.type === 'CallExpression' &&
-      decorator.node.expression.callee.type === 'Identifier' &&
-      ['SkipSelf', 'Host', 'Optional'].includes(
-        decorator.node.expression.callee.name
-      )
-    ) {
-      result.push({ type: decorator.node.expression.callee.name });
-      decorator.remove(); // TODO - move this mutation out of this method
-    }
-  }
-  return result;
+function getHasInjectDecorator(decorators: NodePath<t.Decorator>[]): boolean {
+  return decorators.some((decorator) => {
+    assert(decorator.node?.expression?.type === 'CallExpression');
+    assert(decorator.node.expression.callee.type === 'Identifier');
+    return decorator.node.expression.callee.name === 'Inject';
+  });
 }
 
 /**
- * Returns true
+ * Extracts the decorator type and args from a list of constructor decorators
  * @param decorators
  */
-function isAttributeDecorator(decorators: NodePath<t.Decorator>[]): boolean {
-  return (
-    decorators.length === 1 &&
-    decorators[0].node?.expression?.type === 'CallExpression' &&
-    decorators[0].node.expression.callee.type === 'Identifier' &&
-    decorators[0].node.expression.callee.name === 'Attribute'
-  );
+function getCtorParameterDecorators(
+  decorators: NodePath<t.Decorator>[]
+): CtorParameters[0]['decorators'] {
+  return decorators.map((decorator) => {
+    assert(decorator.node?.expression?.type === 'CallExpression');
+    assert(decorator.node.expression.callee.type === 'Identifier');
+    return {
+      type: decorator.node.expression.callee.name,
+      args:
+        decorator.node.expression.arguments.length > 0
+          ? (decorator.node.expression.arguments as t.Expression[])
+          : undefined,
+    };
+  });
+}
+
+/**
+ * Gets the type identifier name from an identifer
+ * e.g. returns `Foo` from `foo: Foo`
+ * @param identifier
+ */
+function getTypeIdentifierName(
+  identifier: NodePath<t.Identifier>
+): string | undefined {
+  if (
+    identifier.node.typeAnnotation?.type === 'TSTypeAnnotation' &&
+    identifier.node.typeAnnotation.typeAnnotation.type === 'TSTypeReference' &&
+    identifier.node.typeAnnotation.typeAnnotation.typeName.type === 'Identifier'
+  ) {
+    return identifier.node.typeAnnotation.typeAnnotation.typeName.name;
+  }
+  return undefined;
+}
+
+/**
+ * Gets the type primitive name from an identifer
+ * e.g. returns `String` from `foo: string`
+ * @param identifier
+ */
+function getTypePrimitiveName(
+  identifier: NodePath<t.Identifier>
+): string | undefined {
+  const typeMapping = {
+    TSStringKeyword: 'String',
+    TSNumberKeyword: 'Number',
+    TSBooleanKeyword: 'Boolean',
+    TSObjectKeyword: 'Object',
+    TSSymbolKeyword: 'Symbol',
+  };
+  if (
+    identifier.node.typeAnnotation?.type === 'TSTypeAnnotation' &&
+    identifier.node.typeAnnotation.typeAnnotation.type in typeMapping
+  ) {
+    return typeMapping[
+      identifier.node.typeAnnotation.typeAnnotation
+        .type as keyof typeof typeMapping
+    ];
+  }
+  return undefined;
 }
