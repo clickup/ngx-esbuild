@@ -2,35 +2,35 @@
 name: Semgrep
 
 on:
-    # Scan changed files in PRs (diff-aware scanning):
-    pull_request:
-        branches: ['main']
+  # Scan changed files in PRs (diff-aware scanning):
+  pull_request:
+    branches: ['main']
 
-    # Schedule the CI job (this method uses cron syntax):
-    schedule:
-        - cron: '0 0 * * MON-FRI'
+  # Schedule the CI job (this method uses cron syntax):
+  schedule:
+    - cron: '0 0 * * MON-FRI'
 
 jobs:
-    semgrep:
-        # User definable name of this GitHub Actions job.
-        name: Scan
-        # If you are self-hosting, change the following `runs-on` value:
-        runs-on: ubuntu-latest
+  semgrep:
+    # User definable name of this GitHub Actions job.
+    name: Scan
+    # If you are self-hosting, change the following `runs-on` value:
+    runs-on: ubuntu-latest
 
-        container:
-            # A Docker image with Semgrep installed. Do not change this.
-            image: returntocorp/semgrep@sha256:6c7ab81e4d1fd25a09f89f1bd52c984ce107c6ff33affef6ca3bc626a4cc479b
+    container:
+      # A Docker image with Semgrep installed. Do not change this.
+      image: returntocorp/semgrep@sha256:6c7ab81e4d1fd25a09f89f1bd52c984ce107c6ff33affef6ca3bc626a4cc479b
 
-        # Skip any PR created by dependabot to avoid permission issues:
-        if: (github.actor != 'dependabot[bot]')
+    # Skip any PR created by dependabot to avoid permission issues:
+    if: (github.actor != 'dependabot[bot]')
 
-        steps:
-            # Fetch project source with GitHub Actions Checkout.
-            - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
-            # Run the "semgrep ci" command on the command line of the docker image.
-            - run: semgrep ci
-              env:
-                  # Connect to Semgrep Cloud Platform through your SEMGREP_APP_TOKEN.
-                  # Generate a token from Semgrep Cloud Platform > Settings
-                  # and add it to your GitHub secrets.
-                  SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
+    steps:
+      # Fetch project source with GitHub Actions Checkout.
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
+      # Run the "semgrep ci" command on the command line of the docker image.
+      - run: semgrep ci
+        env:
+          # Connect to Semgrep Cloud Platform through your SEMGREP_APP_TOKEN.
+          # Generate a token from Semgrep Cloud Platform > Settings
+          # and add it to your GitHub secrets.
+          SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
